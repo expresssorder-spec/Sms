@@ -1,0 +1,5 @@
+{
+  "name": "Remix: SMS Scraper Service",
+  "description": "A robust Web Scraper Service using axios and cheerio to aggregate data from Receive SMS websites.",
+  "requestFramePermissions": []
+}
