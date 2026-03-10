@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Phone, MessageSquare, RefreshCw, Globe, ArrowLeft, Loader2, AlertCircle, X, Server, Search, Mail, Shield, Info, ChevronRight, ChevronLeft, Calendar, User, ChevronDown, Users } from 'lucide-react';
 import Flag from 'react-world-flags';
 import { getCountryCode } from './utils/countries';
@@ -26,6 +26,8 @@ interface BlogPost {
   excerpt: string;
   date: string;
   author: string;
+  thumbnail?: string;
+  image?: string;
 }
 
 const About = () => (
@@ -211,7 +213,15 @@ const SEOHead = ({ title, description, country, number }: { title?: string, desc
       metaKeywords.setAttribute('name', 'keywords');
       document.head.appendChild(metaKeywords);
     }
-    metaKeywords.setAttribute('content', "Receive SMS online, Recevoir SMS en ligne, Recibir SMS online, استقبال رسائل SMS مجانا, Free virtual number, OTP bypass, temporary phone number");
+    
+    let keywords = "Receive SMS online, Recevoir SMS en ligne, Recibir SMS online, استقبال رسائل SMS مجانا, Free virtual number, OTP bypass, temporary phone number";
+    if (country && number) {
+      keywords = `Receive SMS ${country}, ${number}, virtual number ${country}, OTP bypass ${country}, fake number ${number}, ${keywords}`;
+    } else if (country) {
+      keywords = `Receive SMS ${country}, virtual number ${country}, OTP bypass ${country}, ${keywords}`;
+    }
+    
+    metaKeywords.setAttribute('content', keywords);
 
     // Add Multilingual Meta Tags
     const languages = [
@@ -278,9 +288,36 @@ const InterstitialAd = ({ text, onSkip }: { text: string, onSkip?: () => void })
 );
 
 function Home({ numbers, loadingNumbers, numbersError }: any) {
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const searchQuery = searchParams.get('q') || '';
   const itemsPerPage = 12;
+
+  const setSearchQuery = (query: string) => {
+    setSearchParams(prevParams => {
+      if (query) {
+        prevParams.set('q', query);
+      } else {
+        prevParams.delete('q');
+      }
+      prevParams.delete('page'); // Reset page on new search
+      return prevParams;
+    }, { replace: true });
+  };
+
+  const setPage = (newPageOrUpdater: number | ((prev: number) => number)) => {
+    setSearchParams(prevParams => {
+      const currentPage = parseInt(prevParams.get('page') || '1', 10);
+      const newPage = typeof newPageOrUpdater === 'function' ? newPageOrUpdater(currentPage) : newPageOrUpdater;
+      
+      if (newPage !== 1) {
+        prevParams.set('page', newPage.toString());
+      } else {
+        prevParams.delete('page');
+      }
+      return prevParams;
+    });
+  };
 
   const filteredNumbers = numbers.filter((num: NumberData) => {
     const query = searchQuery.toLowerCase().trim();
@@ -321,10 +358,7 @@ function Home({ numbers, loadingNumbers, numbersError }: any) {
           placeholder="Search by country (e.g. USA, UK, France)..."
           className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-lg"
           value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setPage(1);
-          }}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
@@ -353,6 +387,7 @@ function Home({ numbers, loadingNumbers, numbersError }: any) {
               >
                 <Link
                   to={`/messages?link=${encodeURIComponent(num.link)}&number=${encodeURIComponent(num.number)}&country=${encodeURIComponent(num.country)}&siteId=${encodeURIComponent(num.siteId)}`}
+                  state={{ from: `/?page=${page}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}` }}
                   className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-xl hover:-translate-y-1 transition-all text-left group flex flex-col justify-between h-full shadow-sm relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-full -mr-12 -mt-12 group-hover:bg-indigo-100 transition-colors" />
@@ -388,7 +423,7 @@ function Home({ numbers, loadingNumbers, numbersError }: any) {
           </div>
           
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-12 pb-8">
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-12 pb-8">
               <button 
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
@@ -396,15 +431,50 @@ function Home({ numbers, loadingNumbers, numbersError }: any) {
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              {[...Array(totalPages)].map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setPage(i + 1)}
-                  className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${page === i + 1 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300'}`}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              
+              {(() => {
+                const pages = [];
+                const maxVisible = 5;
+                let start = Math.max(1, page - Math.floor(maxVisible / 2));
+                let end = Math.min(totalPages, start + maxVisible - 1);
+                
+                if (end - start + 1 < maxVisible) {
+                  start = Math.max(1, end - maxVisible + 1);
+                }
+
+                if (start > 1) {
+                  pages.push(
+                    <button key="1" onClick={() => setPage(1)} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all bg-white text-slate-600 border border-slate-200 hover:border-indigo-300`}>1</button>
+                  );
+                  if (start > 2) {
+                    pages.push(<span key="ellipsis-start" className="px-2 text-slate-400">...</span>);
+                  }
+                }
+
+                for (let i = start; i <= end; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      onClick={() => setPage(i)}
+                      className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${page === i ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300'}`}
+                    >
+                      {i}
+                    </button>
+                  );
+                }
+
+                if (end < totalPages) {
+                  if (end < totalPages - 1) {
+                    pages.push(<span key="ellipsis-end" className="px-2 text-slate-400">...</span>);
+                  }
+                  pages.push(
+                    <button key={totalPages} onClick={() => setPage(totalPages)} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all bg-white text-slate-600 border border-slate-200 hover:border-indigo-300`}>{totalPages}</button>
+                  );
+                }
+
+                return pages;
+              })()}
+
               <button 
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
@@ -432,6 +502,7 @@ function Home({ numbers, loadingNumbers, numbersError }: any) {
 function Messages() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const link = searchParams.get('link');
   const number = searchParams.get('number');
@@ -506,7 +577,13 @@ function Messages() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-6 rounded-3xl shadow-sm border border-slate-200 gap-4">
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                if (location.state?.from) {
+                  navigate(location.state.from);
+                } else {
+                  navigate(-1);
+                }
+              }}
               className="p-2 rounded-xl bg-slate-50 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -555,7 +632,8 @@ function Messages() {
         {loadingMessages ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-white rounded-3xl border border-slate-200 shadow-sm">
             <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500" />
-            <p className="font-bold text-lg">Loading messages...</p>
+            <p className="font-bold text-lg text-slate-700">Loading messages...</p>
+            <p className="text-sm text-slate-500 mt-2 max-w-sm text-center">Fetching the latest messages from the network. This might take up to 20 seconds depending on the source.</p>
           </div>
         ) : messages.length > 0 ? (
           <div className="space-y-4">
@@ -639,24 +717,31 @@ function Blog() {
           ))}
         </div>
       ) : (
-        <div className="grid gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, i) => (
             <motion.article 
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all group"
+              className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all group overflow-hidden flex flex-col"
             >
-              <div className="flex items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
-                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.date}</span>
-                <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {post.author}</span>
+              {post.thumbnail && (
+                <div className="w-full h-48 overflow-hidden">
+                  <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                </div>
+              )}
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="flex items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+                  <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.date}</span>
+                  <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {post.author}</span>
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors">{post.title}</h3>
+                <p className="text-slate-600 leading-relaxed mb-6 text-lg flex-grow">{post.excerpt}</p>
+                <Link to={`/blog/${post.id}`} className="inline-flex items-center gap-2 text-indigo-600 font-black hover:gap-3 transition-all mt-auto">
+                  Read Full Article <ChevronRight className="w-5 h-5" />
+                </Link>
               </div>
-              <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors">{post.title}</h3>
-              <p className="text-slate-600 leading-relaxed mb-6 text-lg">{post.excerpt}</p>
-              <Link to={`/blog/${post.id}`} className="inline-flex items-center gap-2 text-indigo-600 font-black hover:gap-3 transition-all">
-                Read Full Article <ChevronRight className="w-5 h-5" />
-              </Link>
             </motion.article>
           ))}
         </div>
@@ -703,6 +788,12 @@ function Article() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">{post.title}</h1>
         </div>
+
+        {post.image && (
+          <div className="w-full h-64 sm:h-96 rounded-3xl overflow-hidden shadow-lg">
+            <img src={post.image} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+          </div>
+        )}
 
         <div className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed space-y-6 font-medium">
           <p className="text-xl text-slate-900 font-bold italic border-l-4 border-indigo-600 pl-6 py-2">

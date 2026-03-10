@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ScraperConfig } from './config.js';
 
 const USER_AGENTS = [
@@ -44,18 +45,12 @@ export async function getNumbers(config: ScraperConfig) {
     let links: cheerio.Cheerio<any>;
     if (config.id === 'receive-smss') {
         links = $('a[href*="/sms/"], a[href*="receive-sms-from"]');
-    } else if (config.id === 'anonymsms') {
-        links = $('a[href*="/number/"]');
-    } else if (config.id === 'sms24') {
-        links = $('a[href*="/number/"]');
-    } else if (config.id === 'sms-receive') {
-        links = $('a[href*="/number/"], a[href*="/sms/"]');
     } else if (config.id === 'sms-online') {
         links = $('a[href*="/receive-free-sms/"]');
     } else if (config.id === 'receive-sms-free') {
         links = $('a[href*="/Free-SMS-Numbers/"]');
-    } else if (config.id === 'sms-activation') {
-        links = $('a[href*="/receive-sms-online/"]');
+    } else if (config.id === 'spytm') {
+        links = $('a[href*="/receive-sms-online/"], a[href*="/number/"]');
     } else {
         links = $('a');
     }
@@ -86,12 +81,27 @@ export async function getNumbers(config: ScraperConfig) {
 
       // Guess country from text or default to Unknown
       let countryText = 'Unknown';
-      const knownCountries = ['United States', 'USA', 'United Kingdom', 'UK', 'Canada', 'France', 'Germany', 'Netherlands', 'Spain', 'Sweden', 'Finland', 'Denmark', 'Poland', 'Russia', 'Australia', 'Belgium', 'Austria', 'Switzerland', 'Portugal', 'Romania', 'Croatia', 'Estonia', 'Latvia', 'Lithuania', 'Czech Republic', 'Slovakia', 'Hungary', 'Bulgaria', 'Greece', 'Ireland', 'Norway', 'Japan', 'South Korea', 'China', 'India', 'Brazil', 'Mexico', 'Argentina', 'South Africa', 'Nigeria', 'Egypt', 'Israel', 'Turkey', 'Saudi Arabia', 'United Arab Emirates', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Vietnam', 'Philippines', 'New Zealand', 'Chile', 'Colombia', 'Peru', 'Venezuela', 'Ukraine', 'Kazakhstan', 'Georgia', 'Armenia', 'Moldova', 'Azerbaijan', 'Uzbekistan', 'Kyrgyzstan', 'Tajikistan', 'Turkmenistan', 'Belarus', 'Lithuania', 'Latvia', 'Estonia'];
       
-      for (const c of knownCountries) {
-        if (text.toLowerCase().includes(c.toLowerCase()) || link.toLowerCase().includes(c.toLowerCase())) {
-          countryText = c;
-          break;
+      // Try to parse the phone number to get the country code
+      try {
+        const phoneNumber = parsePhoneNumberFromString(numberText);
+        if (phoneNumber && phoneNumber.country) {
+          const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+          countryText = regionNames.of(phoneNumber.country) || 'Unknown';
+        }
+      } catch (e) {
+        // Ignore parsing errors
+      }
+
+      // Fallback to text matching if parsing failed
+      if (countryText === 'Unknown') {
+        const knownCountries = ['United States', 'USA', 'United Kingdom', 'UK', 'Canada', 'France', 'Germany', 'Netherlands', 'Spain', 'Sweden', 'Finland', 'Denmark', 'Poland', 'Russia', 'Australia', 'Belgium', 'Austria', 'Switzerland', 'Portugal', 'Romania', 'Croatia', 'Estonia', 'Latvia', 'Lithuania', 'Czech Republic', 'Slovakia', 'Hungary', 'Bulgaria', 'Greece', 'Ireland', 'Norway', 'Japan', 'South Korea', 'China', 'India', 'Brazil', 'Mexico', 'Argentina', 'South Africa', 'Nigeria', 'Egypt', 'Israel', 'Turkey', 'Saudi Arabia', 'United Arab Emirates', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Vietnam', 'Philippines', 'New Zealand', 'Chile', 'Colombia', 'Peru', 'Venezuela', 'Ukraine', 'Kazakhstan', 'Georgia', 'Armenia', 'Moldova', 'Azerbaijan', 'Uzbekistan', 'Kyrgyzstan', 'Tajikistan', 'Turkmenistan', 'Belarus', 'Lithuania', 'Latvia', 'Estonia'];
+        
+        for (const c of knownCountries) {
+          if (text.toLowerCase().includes(c.toLowerCase()) || link.toLowerCase().includes(c.toLowerCase())) {
+            countryText = c;
+            break;
+          }
         }
       }
 
@@ -133,7 +143,7 @@ export async function getMessages(numberUrl: string, config: ScraperConfig) {
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
       },
-      timeout: 20000,
+      timeout: 15000,
     });
 
     const $ = cheerio.load(response.data);
@@ -144,34 +154,6 @@ export async function getMessages(numberUrl: string, config: ScraperConfig) {
     const messages: any[] = [];
 
     // Site-specific high-priority selectors
-    if (config.id === 'anonymsms') {
-        $('.mobile-table-panel').each((_, el) => {
-            const from = $(el).find('.mobile-table-panel__sender').text().trim();
-            const time = $(el).find('.mobile-table-panel__created-at').text().trim();
-            const text = $(el).find('.mobile-table-panel__content').text().trim();
-            if (from && text) {
-                messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
-            }
-        });
-        if (messages.length > 0) return messages;
-    }
-
-    if (config.id === 'sms24') {
-        $('dl#sms_msg dt').each((_, el) => {
-            const dt = $(el);
-            const dd = dt.next('dd');
-            if (dt.length && dd.length) {
-                const from = dd.find('a').first().text().trim() || 'Unknown';
-                const text = dd.find('.text-break').text().trim();
-                const time = dt.text().trim();
-                if (text) {
-                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Recent' });
-                }
-            }
-        });
-        if (messages.length > 0) return messages;
-    }
-
     if (config.id === 'sms-online') {
         $('table tr').each((_, el) => {
             const tds = $(el).find('td');
@@ -202,21 +184,6 @@ export async function getMessages(numberUrl: string, config: ScraperConfig) {
         if (messages.length > 0) return messages;
     }
 
-    if (config.id === 'sms-receive') {
-        $('table tr').each((_, el) => {
-            const tds = $(el).find('td');
-            if (tds.length >= 3) {
-                const from = tds.eq(0).text().trim();
-                const text = tds.eq(1).text().trim();
-                const time = tds.eq(2).text().trim();
-                if (from && text) {
-                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
-                }
-            }
-        });
-        if (messages.length > 0) return messages;
-    }
-
     if (config.id === 'receive-smss') {
         $('table tr').each((_, el) => {
             const tds = $(el).find('td');
@@ -232,7 +199,7 @@ export async function getMessages(numberUrl: string, config: ScraperConfig) {
         if (messages.length > 0) return messages;
     }
 
-    if (config.id === 'sms-activation') {
+    if (config.id === 'spytm') {
         $('table tr').each((_, el) => {
             const tds = $(el).find('td');
             if (tds.length >= 3) {

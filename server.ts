@@ -83,21 +83,117 @@ async function startServer() {
         title: "How to use virtual numbers for privacy",
         excerpt: "Learn how to protect your personal information by using temporary virtual numbers for online registrations.",
         date: "March 8, 2026",
-        author: "Privacy Expert"
+        author: "Privacy Expert",
+        thumbnail: "https://picsum.photos/seed/privacy/400/300",
+        image: "https://picsum.photos/seed/privacy/800/400"
       },
       {
         id: "why-bypass-otp",
         title: "Why bypass OTP? The security implications",
         excerpt: "Understanding why users choose to bypass OTP and how to stay safe while doing so.",
         date: "March 7, 2026",
-        author: "Security Analyst"
+        author: "Security Analyst",
+        thumbnail: "https://picsum.photos/seed/security/400/300",
+        image: "https://picsum.photos/seed/security/800/400"
       },
       {
         id: "staying-safe-online",
         title: "Staying safe online: A comprehensive guide",
         excerpt: "Best practices for maintaining your digital footprint and avoiding common online scams.",
         date: "March 6, 2026",
-        author: "Web Safety Team"
+        author: "Web Safety Team",
+        thumbnail: "https://picsum.photos/seed/safe/400/300",
+        image: "https://picsum.photos/seed/safe/800/400"
+      },
+      {
+        id: "protecting-your-identity",
+        title: "Protecting Your Digital Identity in 2026",
+        excerpt: "As cyber threats evolve, so must our strategies for protecting our personal data online.",
+        date: "March 5, 2026",
+        author: "Cybersecurity Specialist",
+        thumbnail: "https://picsum.photos/seed/identity/400/300",
+        image: "https://picsum.photos/seed/identity/800/400"
+      },
+      {
+        id: "the-rise-of-burner-phones",
+        title: "The Rise of Burner Phones and Virtual Numbers",
+        excerpt: "Why more people are turning to secondary numbers to manage their online presence.",
+        date: "March 4, 2026",
+        author: "Tech Reporter",
+        thumbnail: "https://picsum.photos/seed/phone/400/300",
+        image: "https://picsum.photos/seed/phone/800/400"
+      },
+      {
+        id: "social-media-privacy-settings",
+        title: "Mastering Social Media Privacy Settings",
+        excerpt: "A step-by-step guide to locking down your social media profiles from prying eyes.",
+        date: "March 3, 2026",
+        author: "Social Media Guru",
+        thumbnail: "https://picsum.photos/seed/social/400/300",
+        image: "https://picsum.photos/seed/social/800/400"
+      },
+      {
+        id: "data-brokers-what-they-know",
+        title: "Data Brokers: What They Know About You",
+        excerpt: "Uncovering the hidden industry that buys and sells your personal information.",
+        date: "March 2, 2026",
+        author: "Investigative Journalist",
+        thumbnail: "https://picsum.photos/seed/data/400/300",
+        image: "https://picsum.photos/seed/data/800/400"
+      },
+      {
+        id: "secure-messaging-apps",
+        title: "Top Secure Messaging Apps of the Year",
+        excerpt: "A comparison of the best end-to-end encrypted messaging applications available today.",
+        date: "March 1, 2026",
+        author: "App Reviewer",
+        thumbnail: "https://picsum.photos/seed/message/400/300",
+        image: "https://picsum.photos/seed/message/800/400"
+      },
+      {
+        id: "phishing-scams-to-avoid",
+        title: "New Phishing Scams You Need to Avoid",
+        excerpt: "Learn to identify the latest tactics scammers are using to steal your credentials.",
+        date: "February 28, 2026",
+        author: "Security Analyst",
+        thumbnail: "https://picsum.photos/seed/phishing/400/300",
+        image: "https://picsum.photos/seed/phishing/800/400"
+      },
+      {
+        id: "two-factor-authentication-guide",
+        title: "The Ultimate Guide to Two-Factor Authentication",
+        excerpt: "Why 2FA is essential and how to set it up correctly across all your accounts.",
+        date: "February 27, 2026",
+        author: "Tech Support",
+        thumbnail: "https://picsum.photos/seed/2fa/400/300",
+        image: "https://picsum.photos/seed/2fa/800/400"
+      },
+      {
+        id: "public-wifi-dangers",
+        title: "The Hidden Dangers of Public Wi-Fi",
+        excerpt: "How to stay safe when connecting to free internet networks in cafes and airports.",
+        date: "February 26, 2026",
+        author: "Network Engineer",
+        thumbnail: "https://picsum.photos/seed/wifi/400/300",
+        image: "https://picsum.photos/seed/wifi/800/400"
+      },
+      {
+        id: "password-managers-explained",
+        title: "Why You Need a Password Manager Now",
+        excerpt: "Stop reusing passwords. Discover how password managers can simplify and secure your life.",
+        date: "February 25, 2026",
+        author: "Software Reviewer",
+        thumbnail: "https://picsum.photos/seed/password/400/300",
+        image: "https://picsum.photos/seed/password/800/400"
+      },
+      {
+        id: "vpn-myths-debunked",
+        title: "Common VPN Myths Debunked",
+        excerpt: "Separating fact from fiction when it comes to Virtual Private Networks and anonymity.",
+        date: "February 24, 2026",
+        author: "Privacy Expert",
+        thumbnail: "https://picsum.photos/seed/vpn/400/300",
+        image: "https://picsum.photos/seed/vpn/800/400"
       }
     ]);
   });

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://globalsms-hub.com/sitemap.xml

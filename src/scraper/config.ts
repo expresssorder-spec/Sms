@@ -14,29 +14,29 @@ export const configs: Record<string, ScraperConfig> = {
     baseUrl: 'https://receive-smss.com',
     numbersList: { url: 'https://receive-smss.com/' },
   },
-  'anonymsms': {
-    id: 'anonymsms',
-    name: 'Secondary Node',
-    baseUrl: 'https://anonymsms.com',
-    numbersList: { url: 'https://anonymsms.com/' },
+  'receive-smss-2': {
+    id: 'receive-smss',
+    name: 'Primary Node (Page 2)',
+    baseUrl: 'https://receive-smss.com',
+    numbersList: { url: 'https://receive-smss.com/page/2/' },
   },
-  'sms-receive': {
-    id: 'sms-receive',
-    name: 'Backup Node',
-    baseUrl: 'https://sms-receive.net',
-    numbersList: { url: 'https://sms-receive.net/' },
+  'receive-smss-3': {
+    id: 'receive-smss',
+    name: 'Primary Node (Page 3)',
+    baseUrl: 'https://receive-smss.com',
+    numbersList: { url: 'https://receive-smss.com/page/3/' },
   },
-  'sms24': {
-    id: 'sms24',
-    name: 'Global Node',
-    baseUrl: 'https://sms24.me',
-    numbersList: { url: 'https://sms24.me/en/numbers' },
+  'receive-smss-4': {
+    id: 'receive-smss',
+    name: 'Primary Node (Page 4)',
+    baseUrl: 'https://receive-smss.com',
+    numbersList: { url: 'https://receive-smss.com/page/4/' },
   },
-  'sms-online': {
-    id: 'sms-online',
-    name: 'Privacy Node',
-    baseUrl: 'https://sms-online.co',
-    numbersList: { url: 'https://sms-online.co/receive-free-sms' },
+  'receive-smss-5': {
+    id: 'receive-smss',
+    name: 'Primary Node (Page 5)',
+    baseUrl: 'https://receive-smss.com',
+    numbersList: { url: 'https://receive-smss.com/page/5/' },
   },
   'receive-sms-free': {
     id: 'receive-sms-free',
@@ -44,10 +44,16 @@ export const configs: Record<string, ScraperConfig> = {
     baseUrl: 'https://receive-sms-free.cc',
     numbersList: { url: 'https://receive-sms-free.cc/' },
   },
-  'sms-activation': {
-    id: 'sms-activation',
-    name: 'Active Node',
-    baseUrl: 'https://sms-activation-service.com',
-    numbersList: { url: 'https://sms-activation-service.com/' },
+  'spytm': {
+    id: 'spytm',
+    name: 'Spy Node',
+    baseUrl: 'https://spytm.com',
+    numbersList: { url: 'https://spytm.com/' },
+  },
+  'receive-sms-cc': {
+    id: 'receive-sms-cc',
+    name: 'Backup Node',
+    baseUrl: 'https://receive-sms.cc',
+    numbersList: { url: 'https://receive-sms.cc/' },
   }
 };
