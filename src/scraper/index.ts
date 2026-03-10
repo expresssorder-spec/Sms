@@ -4,10 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { ScraperConfig } from './config.js';
 
 const USER_AGENTS = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15',
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Mobile/15E148 Safari/604.1',
+  'Mozilla/5.0 (iPad; CPU OS 17_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Mobile/15E148 Safari/604.1',
+  'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36'
 ];
 
 function getRandomUserAgent() {
@@ -36,13 +40,35 @@ export async function getNumbers(config: ScraperConfig) {
     const $ = cheerio.load(response.data);
     const numbers: any[] = [];
 
-    // Generic extraction: look for links that might be SMS numbers
-    $('a').each((_, el) => {
+    // Site-specific selectors for better accuracy
+    let links: cheerio.Cheerio<any>;
+    if (config.id === 'receive-smss') {
+        links = $('a[href*="/sms/"], a[href*="receive-sms-from"]');
+    } else if (config.id === 'anonymsms') {
+        links = $('a[href*="/number/"]');
+    } else if (config.id === 'sms24') {
+        links = $('a[href*="/number/"]');
+    } else if (config.id === 'sms-receive') {
+        links = $('a[href*="/number/"], a[href*="/sms/"]');
+    } else if (config.id === 'sms-online') {
+        links = $('a[href*="/receive-free-sms/"]');
+    } else if (config.id === 'receive-sms-free') {
+        links = $('a[href*="/Free-SMS-Numbers/"]');
+    } else if (config.id === 'sms-activation') {
+        links = $('a[href*="/receive-sms-online/"]');
+    } else {
+        links = $('a');
+    }
+
+    // If site-specific selectors found nothing, fallback to all links
+    if (links.length === 0) links = $('a');
+
+    links.each((_, el) => {
       let link = $(el).attr('href');
       if (!link) return;
       
       // Filter out obvious non-number links
-      if (link.includes('privacy') || link.includes('contact') || link.includes('about') || link.includes('login') || link.includes('register') || link.includes('faq') || link.includes('receive-sms-from')) {
+      if (link.includes('privacy') || link.includes('contact') || link.includes('about') || link.includes('login') || link.includes('register') || link.includes('faq')) {
         return;
       }
 
@@ -53,11 +79,14 @@ export async function getNumbers(config: ScraperConfig) {
       if (!phoneMatch) return;
 
       let numberText = phoneMatch[0];
-      if (!numberText.startsWith('+')) numberText = '+' + numberText;
+      if (!numberText.startsWith('+')) {
+          // Try to prepend '+' if it's missing, but only if it looks like a full number
+          if (numberText.length >= 10) numberText = '+' + numberText;
+      }
 
       // Guess country from text or default to Unknown
       let countryText = 'Unknown';
-      const knownCountries = ['United States', 'USA', 'United Kingdom', 'UK', 'Canada', 'France', 'Germany', 'Netherlands', 'Spain', 'Sweden', 'Finland', 'Denmark', 'Poland', 'Russia', 'Australia', 'Belgium', 'Austria', 'Switzerland', 'Portugal', 'Romania', 'Croatia', 'Estonia', 'Latvia', 'Lithuania', 'Czech Republic', 'Slovakia', 'Hungary', 'Bulgaria', 'Greece', 'Ireland', 'Norway', 'Japan', 'South Korea', 'China', 'India', 'Brazil', 'Mexico', 'Argentina', 'South Africa', 'Nigeria', 'Egypt', 'Israel', 'Turkey', 'Saudi Arabia', 'United Arab Emirates', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Vietnam', 'Philippines', 'New Zealand', 'Chile', 'Colombia', 'Peru', 'Venezuela'];
+      const knownCountries = ['United States', 'USA', 'United Kingdom', 'UK', 'Canada', 'France', 'Germany', 'Netherlands', 'Spain', 'Sweden', 'Finland', 'Denmark', 'Poland', 'Russia', 'Australia', 'Belgium', 'Austria', 'Switzerland', 'Portugal', 'Romania', 'Croatia', 'Estonia', 'Latvia', 'Lithuania', 'Czech Republic', 'Slovakia', 'Hungary', 'Bulgaria', 'Greece', 'Ireland', 'Norway', 'Japan', 'South Korea', 'China', 'India', 'Brazil', 'Mexico', 'Argentina', 'South Africa', 'Nigeria', 'Egypt', 'Israel', 'Turkey', 'Saudi Arabia', 'United Arab Emirates', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Vietnam', 'Philippines', 'New Zealand', 'Chile', 'Colombia', 'Peru', 'Venezuela', 'Ukraine', 'Kazakhstan', 'Georgia', 'Armenia', 'Moldova', 'Azerbaijan', 'Uzbekistan', 'Kyrgyzstan', 'Tajikistan', 'Turkmenistan', 'Belarus', 'Lithuania', 'Latvia', 'Estonia'];
       
       for (const c of knownCountries) {
         if (text.toLowerCase().includes(c.toLowerCase()) || link.toLowerCase().includes(c.toLowerCase())) {
@@ -100,103 +129,205 @@ export async function getMessages(numberUrl: string, config: ScraperConfig) {
         'User-Agent': getRandomUserAgent(),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Sec-Fetch-User': '?1',
-        'Cache-Control': 'max-age=0',
+        'Referer': config.baseUrl,
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
       },
-      timeout: 15000,
+      timeout: 20000,
     });
 
     const $ = cheerio.load(response.data);
+    
+    // Remove noise but be careful not to remove content
+    $('script, style, noscript, iframe, nav, footer').remove();
+
     const messages: any[] = [];
 
-    // Specifically target the <table> or <div> list that contains the SMS history
-    // Loop through every single row available in the HTML
-    const rows = $('table tbody tr, table tr, .messages-list .message-row, .sms-table .row, .msg-row, .c-list .row, .list-group-item, .row, .message_details');
+    // Site-specific high-priority selectors
+    if (config.id === 'anonymsms') {
+        $('.mobile-table-panel').each((_, el) => {
+            const from = $(el).find('.mobile-table-panel__sender').text().trim();
+            const time = $(el).find('.mobile-table-panel__created-at').text().trim();
+            const text = $(el).find('.mobile-table-panel__content').text().trim();
+            if (from && text) {
+                messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
 
-    rows.each((_, el) => {
-      // Find columns within the row
-      const tds = $(el).find('td, div.cell, div.col, div[class*="col-"]');
+    if (config.id === 'sms24') {
+        $('dl#sms_msg dt').each((_, el) => {
+            const dt = $(el);
+            const dd = dt.next('dd');
+            if (dt.length && dd.length) {
+                const from = dd.find('a').first().text().trim() || 'Unknown';
+                const text = dd.find('.text-break').text().trim();
+                const time = dt.text().trim();
+                if (text) {
+                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Recent' });
+                }
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
+
+    if (config.id === 'sms-online') {
+        $('table tr').each((_, el) => {
+            const tds = $(el).find('td');
+            if (tds.length >= 3) {
+                const from = tds.eq(0).text().trim();
+                const text = tds.eq(1).text().trim();
+                const time = tds.eq(2).text().trim();
+                if (from && text) {
+                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
+                }
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
+
+    if (config.id === 'receive-sms-free') {
+        $('table tr').each((_, el) => {
+            const tds = $(el).find('td');
+            if (tds.length >= 3) {
+                const from = tds.eq(0).text().trim();
+                const text = tds.eq(1).text().trim();
+                const time = tds.eq(2).text().trim();
+                if (from && text) {
+                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
+                }
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
+
+    if (config.id === 'sms-receive') {
+        $('table tr').each((_, el) => {
+            const tds = $(el).find('td');
+            if (tds.length >= 3) {
+                const from = tds.eq(0).text().trim();
+                const text = tds.eq(1).text().trim();
+                const time = tds.eq(2).text().trim();
+                if (from && text) {
+                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
+                }
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
+
+    if (config.id === 'receive-smss') {
+        $('table tr').each((_, el) => {
+            const tds = $(el).find('td');
+            if (tds.length >= 3) {
+                const from = tds.eq(0).text().trim();
+                const text = tds.eq(1).text().trim();
+                const time = tds.eq(2).text().trim();
+                if (from && text) {
+                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
+                }
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
+
+    if (config.id === 'sms-activation') {
+        $('table tr').each((_, el) => {
+            const tds = $(el).find('td');
+            if (tds.length >= 3) {
+                const from = tds.eq(0).text().trim();
+                const text = tds.eq(1).text().trim();
+                const time = tds.eq(2).text().trim();
+                if (from && text) {
+                    messages.push({ id: uuidv4(), sender: from, text, time: time || 'Just now' });
+                }
+            }
+        });
+        if (messages.length > 0) return messages;
+    }
+
+    // Generic Table/Row extraction
+    const rowSelectors = [
+        'table tbody tr', 
+        'table tr', 
+        '.messages-list .message-row', 
+        '.sms-table tr',
+        '.msg-row', 
+        '.message_details', 
+        '.sms-item', 
+        '.sms-row',
+        '.table-panel',
+        '.sms-card'
+    ];
+
+    $(rowSelectors.join(', ')).each((_, el) => {
+      const tds = $(el).find('td, th, .cell, .col, .sms-content, .sms-sender, .sms-time, .sender, .from, .time, .text, .message, .msgg, .senderr');
       
-      if (tds.length >= 3) {
-        // Extract text from all columns
-        const texts: string[] = [];
+      if (tds.length >= 2 || $(el).hasClass('message_details')) { 
+        let sender = '';
+        let text = '';
+        let time = '';
+
+        // Try class-based identification
         tds.each((i, td) => {
-          // Remove labels like "Message", "Sender", "Time" if they are part of the text
-          let t = $(td).text().replace(/\s+/g, ' ').trim();
-          t = t.replace(/^(Message|Sender|Time|From|Date)\s*:?/i, '').trim();
-          if (t) texts.push(t);
+          const $td = $(td);
+          const content = $td.text().replace(/\s+/g, ' ').trim();
+          if (!content) return;
+
+          if ($td.hasClass('message') || $td.hasClass('text') || $td.hasClass('msgg') || $td.hasClass('sms-content') || $td.hasClass('table-panel__message')) {
+            text = content;
+          } else if ($td.hasClass('sender') || $td.hasClass('from') || $td.hasClass('senderr') || $td.hasClass('sms-sender') || $td.hasClass('table-panel__sender')) {
+            sender = content;
+          } else if ($td.hasClass('time') || $td.hasClass('date') || $td.hasClass('sms-time') || $td.hasClass('table-panel__time')) {
+            time = content;
+          }
         });
 
-        if (texts.length >= 3) {
-          let sender = texts[0];
-          let time = texts[1];
-          let text = texts[2];
+        // Fallback to position-based if class-based failed
+        if (!text || !sender) {
+          const texts: string[] = [];
+          tds.each((i, td) => {
+            const t = $(td).text().replace(/\s+/g, ' ').trim();
+            if (t && t.length < 1000 && !t.includes('function') && !t.includes('var ')) {
+              texts.push(t);
+            }
+          });
 
-          // Sometimes the order is Sender, Message, Time. 
-          // Usually the message is the longest string.
-          if (texts[1].length > texts[2].length && !texts[1].toLowerCase().includes('ago') && !texts[1].toLowerCase().includes('min') && !texts[1].toLowerCase().includes('sec')) {
-             text = texts[1];
-             time = texts[2];
+          if (texts.length >= 2) {
+            const sorted = [...texts].sort((a, b) => b.length - a.length);
+            text = sorted[0];
+            const remaining = texts.filter(t => t !== text);
+            sender = remaining[0] || 'Unknown';
+            time = remaining[1] || 'Just now';
           }
+        }
 
-          // If the first column was actually the message (like on receive-smss.com)
-          // texts[0] = message, texts[1] = sender, texts[2] = time
-          if (texts[0].length > texts[1].length && texts[0].length > texts[2].length && (texts[2].toLowerCase().includes('ago') || texts[2].toLowerCase().includes('min') || texts[2].toLowerCase().includes('sec') || texts[2].toLowerCase().includes('hour') || texts[2].toLowerCase().includes('day'))) {
-             text = texts[0];
-             sender = texts[1];
-             time = texts[2];
-          }
+        if (text && text.length > 1 && text.length < 2000) {
+            sender = sender || 'Unknown';
+            time = time || 'Recent';
+            
+            // Clean labels
+            sender = sender.replace(/^(Sender|From|Number)\s*:?/i, '').trim();
+            text = text.replace(/^(Message|Content|Text)\s*:?/i, '').trim();
+            time = time.replace(/^(Time|Date|Received)\s*:?/i, '').trim();
 
-          // Skip header rows (if the row is literally just the table headers)
-          if (sender.toLowerCase() === 'sender' || sender.toLowerCase() === 'from' || time.toLowerCase() === 'time' || time.toLowerCase() === 'date') {
-            return;
-          }
-
-          // Validation: SMS messages are rarely over 1000 chars, senders are short, and time should look like a time
-          if (text.length > 1000 || sender.length > 100 || time.length > 100) {
-            return;
-          }
-
-          // Avoid duplicates (sometimes same row is parsed multiple times due to nested selectors)
-          const isDuplicate = messages.some(m => m.sender === sender && m.time === time && m.text === text);
-          
-          if (!isDuplicate && sender && text && time) {
-            messages.push({
-              sender,
-              time,
-              text,
-            });
-          }
+            if (!['sender', 'from', 'message', 'time'].includes(sender.toLowerCase())) {
+                const isDuplicate = messages.some(m => m.sender === sender && m.text === text);
+                if (!isDuplicate) {
+                    messages.push({ id: uuidv4(), sender, text, time });
+                }
+            }
         }
       }
     });
 
-    // Fallback for div-based layouts if table extraction fails
+    // Final catch-all for very loose structures
     if (messages.length === 0) {
-        $('.message-row, .msg-row, .sms-row, .list-item, .message-item, .message_details').each((_, el) => {
-            let sender = $(el).find('.sender, .from, .number, .senderr, [class*="sender"], [class*="from"]').text().replace(/\s+/g, ' ').trim();
-            let time = $(el).find('.time, .date, .timestamp, [class*="time"], [class*="date"]').text().replace(/\s+/g, ' ').trim();
-            let text = $(el).find('.text, .message, .msg, .content, .msgg, [class*="message"], [class*="text"]').text().replace(/\s+/g, ' ').trim();
-
-            sender = sender.replace(/^(Message|Sender|Time|From|Date)\s*:?/i, '').trim();
-            time = time.replace(/^(Message|Sender|Time|From|Date)\s*:?/i, '').trim();
-            text = text.replace(/^(Message|Sender|Time|From|Date)\s*:?/i, '').trim();
-
-            if (text.length > 1000 || sender.length > 100 || time.length > 100) {
-              return;
-            }
-
-            if (sender && text && time) {
-                const isDuplicate = messages.some(m => m.sender === sender && m.time === time && m.text === text);
-                if (!isDuplicate) {
-                  messages.push({ sender, time, text });
-                }
+        $('.sms-content, .message-body, .msg-text').each((_, el) => {
+            const text = $(el).text().trim();
+            if (text.length > 2 && text.length < 1000) {
+                messages.push({ id: uuidv4(), sender: 'Unknown', text, time: 'Recent' });
             }
         });
     }
@@ -204,6 +335,6 @@ export async function getMessages(numberUrl: string, config: ScraperConfig) {
     return messages;
   } catch (error) {
     console.error(`Error scraping messages from ${numberUrl}:`, error);
-    throw new Error(`Failed to scrape messages: ${error instanceof Error ? error.message : String(error)}`);
+    return [];
   }
 }

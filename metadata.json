@@ -1,5 +1,5 @@
 {
-  "name": "Remix: SMS Scraper Service",
-  "description": "A robust Web Scraper Service using axios and cheerio to aggregate data from Receive SMS websites.",
+  "name": "GlobalSMS Hub",
+  "description": "Professional platform to receive SMS online for free. Privacy-focused virtual numbers for OTP bypass and online verification.",
   "requestFramePermissions": []
 }
