@@ -214,7 +214,7 @@ const SEOHead = ({ title, description, country, number }: { title?: string, desc
       document.head.appendChild(metaKeywords);
     }
     
-    let keywords = "Receive SMS online, Recevoir SMS en ligne, Recibir SMS online, استقبال رسائل SMS مجانا, Free virtual number, OTP bypass, temporary phone number";
+    let keywords = "Receive SMS online, Recevoir SMS en ligne, Recibir SMS online, استقبال رسائل SMS مجانا, Free virtual number, OTP bypass, temporary phone number, Receive SMS verification, temporary SMS, disposable number";
     if (country && number) {
       keywords = `Receive SMS ${country}, ${number}, virtual number ${country}, OTP bypass ${country}, fake number ${number}, ${keywords}`;
     } else if (country) {
@@ -263,11 +263,9 @@ const JSONLD = () => (
   </script>
 );
 
-const AdSensePlaceholder = ({ label = "AdSense Ad", className = "" }: { label?: string, className?: string }) => (
-  <div className={`bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-slate-400 font-medium ${className}`}>
-    {label}
-  </div>
-);
+const AdSensePlaceholder = ({ label = "AdSense Ad", className = "" }: { label?: string, className?: string }) => {
+  return null;
+};
 
 const InterstitialAd = ({ text, onSkip }: { text: string, onSkip?: () => void }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm">
@@ -277,9 +275,6 @@ const InterstitialAd = ({ text, onSkip }: { text: string, onSkip?: () => void })
           <X className="w-5 h-5" />
         </button>
       )}
-      <div className="w-full h-48 bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-slate-400 font-medium mb-6">
-        AdSense Vignette / Interstitial Ad
-      </div>
       <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
       <h3 className="text-lg font-semibold text-slate-900">{text}</h3>
       <p className="text-sm text-slate-500 mt-2">Please wait while we prepare your content...</p>
