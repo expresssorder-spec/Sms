@@ -1,28 +1,26 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import cors from "cors";
 import { getNumbers, getMessages } from "./src/scraper/index.js";
 import { configs } from "./src/scraper/config.js";
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  app.use(cors());
-  app.use(express.json());
+app.use(cors());
+app.use(express.json());
 
-  // API routes FIRST
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
-  });
+// API routes FIRST
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
 
-  app.get("/robots.txt", (req, res) => {
-    res.type("text/plain");
-    const baseUrl = process.env.APP_URL || "https://globalsms-hub.com";
-    res.send(`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${baseUrl}/sitemap.xml`);
-  });
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  const baseUrl = process.env.APP_URL || "https://globalsms-hub.com";
+  res.send(`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${baseUrl}/sitemap.xml`);
+});
 
-  app.get("/sitemap.xml", async (req, res) => {
+app.get("/sitemap.xml", async (req, res) => {
     res.type("application/xml");
     const baseUrl = process.env.APP_URL || "https://globalsms-hub.com";
     const date = new Date().toISOString().split('T')[0];
@@ -241,7 +239,8 @@ async function startServer() {
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
@@ -249,9 +248,10 @@ async function startServer() {
     app.use(vite.middlewares);
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
 
-startServer();
+export default app;
