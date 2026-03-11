@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://receivesmsquick.com/sitemap.xml
+Sitemap: https://www.receivesmsquick.com/sitemap.xml
