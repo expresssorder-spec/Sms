@@ -16,13 +16,13 @@ app.get("/api/health", (req, res) => {
 
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
-  const baseUrl = process.env.APP_URL || "https://globalsms-hub.com";
+  const baseUrl = process.env.APP_URL || "https://receivesmsquick.com";
   res.send(`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${baseUrl}/sitemap.xml`);
 });
 
 app.get("/sitemap.xml", async (req, res) => {
     res.type("application/xml");
-    const baseUrl = process.env.APP_URL || "https://globalsms-hub.com";
+    const baseUrl = process.env.APP_URL || "https://receivesmsquick.com";
     const date = new Date().toISOString().split('T')[0];
     
     // Blog posts

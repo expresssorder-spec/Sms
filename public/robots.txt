@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://globalsms-hub.com/sitemap.xml
+Sitemap: https://receivesmsquick.com/sitemap.xml

@@ -47,12 +47,12 @@ const About = () => (
         
         <div className="prose prose-slate max-w-none">
           <p className="text-xl text-slate-600 leading-relaxed mb-8">
-            GlobalSMS Hub is a leading provider of free virtual phone numbers for online SMS verification. Our mission is to protect your privacy by providing a secure way to receive SMS online without using your personal phone number.
+            Free SMS OTP Receive is a leading provider of free virtual phone numbers for online SMS verification. Our mission is to protect your privacy by providing a secure way to receive SMS online without using your personal phone number.
           </p>
 
           <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4">Our Mission</h2>
           <p className="text-slate-600 mb-6">
-            In an era where digital privacy is increasingly under threat, we believe everyone should have access to tools that protect their personal information. GlobalSMS Hub was built to provide a simple, reliable, and free solution for bypassing SMS verifications on various platforms.
+            In an era where digital privacy is increasingly under threat, we believe everyone should have access to tools that protect their personal information. Free SMS OTP Receive was built to provide a simple, reliable, and free solution for bypassing SMS verifications on various platforms.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 mt-12">
@@ -97,7 +97,7 @@ const Navbar = () => {
           <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-700 transition-colors">
             <MessageSquare className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">GlobalSMS <span className="text-indigo-600">Hub</span></h1>
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">Free SMS OTP <span className="text-indigo-600">Receive</span></h1>
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
@@ -146,7 +146,7 @@ const Footer = () => (
         <div className="col-span-1 md:col-span-2">
           <Link to="/" className="flex items-center gap-2 mb-4">
             <MessageSquare className="w-5 h-5 text-indigo-600" />
-            <span className="text-lg font-bold">GlobalSMS Hub</span>
+            <span className="text-lg font-bold">Free SMS OTP Receive</span>
           </Link>
           <p className="text-slate-500 text-sm max-w-xs leading-relaxed">
             The world's leading platform for receiving SMS online. Protect your privacy with our free virtual numbers for OTP verification.
@@ -170,7 +170,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-slate-400 text-xs">© 2026 GlobalSMS Hub. All rights reserved.</p>
+        <p className="text-slate-400 text-xs">© 2026 Free SMS OTP Receive. All rights reserved.</p>
         <div className="flex gap-4 text-xs text-slate-400">
           <span>Receive SMS Online</span>
           <span>Recevoir SMS en ligne</span>
@@ -184,14 +184,14 @@ const Footer = () => (
 
 const SEOHead = ({ title, description, country, number }: { title?: string, description?: string, country?: string, number?: string }) => {
   useEffect(() => {
-    let finalTitle = title || "GlobalSMS Hub | Receive SMS Online for Free";
-    let finalDesc = description || "Free virtual numbers to receive SMS online for privacy and OTP bypass. No registration required.";
+    let finalTitle = title || "Free SMS OTP Receive - Receive SMS Online for Free (OTP Verification)";
+    let finalDesc = description || "Get your Free SMS OTP Receive service here. Receive SMS online for free with our fast virtual numbers for WhatsApp verification, Telegram OTP, and Google bypass. Our US phone number for verification helps you bypass phone verification instantly without registration.";
 
     if (country && number) {
-      finalTitle = `Receive SMS for ${country} ${number} | GlobalSMS Hub`;
+      finalTitle = `Receive SMS for ${country} ${number} | Free SMS OTP Receive`;
       finalDesc = `Receive SMS online for free with our ${country} virtual number ${number}. Use it for OTP verification, privacy, and bypassing registration requirements. Recevoir SMS en ligne. Recibir SMS online. استقبال رسائل SMS مجانا.`;
     } else if (country) {
-      finalTitle = `Free Virtual Numbers for ${country} | GlobalSMS Hub`;
+      finalTitle = `Free Virtual Numbers for ${country} | Free SMS OTP Receive`;
       finalDesc = `Get free virtual numbers for ${country}. Receive SMS online for OTP bypass and privacy. Recevoir SMS en ligne pour ${country}. Recibir SMS online.`;
     }
 
@@ -214,7 +214,7 @@ const SEOHead = ({ title, description, country, number }: { title?: string, desc
       document.head.appendChild(metaKeywords);
     }
     
-    let keywords = "Receive SMS online, Recevoir SMS en ligne, Recibir SMS online, استقبال رسائل SMS مجانا, Free virtual number, OTP bypass, temporary phone number, Receive SMS verification, temporary SMS, disposable number";
+    let keywords = "Receive SMS online, Recevoir SMS en ligne, Recibir SMS online, استقبال رسائل SMS مجانا, Free virtual number, OTP bypass, temporary phone number, Receive SMS verification, temporary SMS, disposable number, WhatsApp Virtual Number for OTP, Telegram SMS Verification Online, Google Account Phone Verification Bypass, US Phone Number for Verification Free, UK Mobile Number to Receive SMS Online, Bypass Phone Verification, No Registration Receive SMS Online, Burner Phone Number for Verification, Virtual SIM for SMS Online";
     if (country && number) {
       keywords = `Receive SMS ${country}, ${number}, virtual number ${country}, OTP bypass ${country}, fake number ${number}, ${keywords}`;
     } else if (country) {
@@ -250,7 +250,7 @@ const JSONLD = () => (
     {JSON.stringify({
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "GlobalSMS Hub",
+      "name": "Free SMS OTP Receive",
       "operatingSystem": "Web",
       "applicationCategory": "Utility",
       "description": "Free virtual numbers to receive SMS online for privacy and OTP bypass.",
@@ -490,6 +490,25 @@ function Home({ numbers, loadingNumbers, numbersError }: any) {
           <button onClick={() => setSearchQuery('')} className="mt-6 text-indigo-600 font-bold hover:underline">Clear Search</button>
         </div>
       )}
+
+      <div className="mt-20 bg-white rounded-3xl p-8 md:p-12 border border-slate-200 shadow-sm prose prose-slate max-w-none">
+        <h2 className="text-3xl font-black text-slate-900 mb-6">About our Service</h2>
+        
+        <h2 className="text-2xl font-bold text-slate-800 mt-8 mb-4">Why use a Temporary SMS for Google and WhatsApp Verification?</h2>
+        <p className="text-slate-600 leading-relaxed">
+          Using a temporary SMS or virtual number protects your personal privacy and keeps your real phone number safe from data brokers, spammers, and hackers. When you use our Free SMS OTP Receive service for Google, WhatsApp, or any other platform, you ensure that your primary identity remains anonymous and secure.
+        </p>
+
+        <h2 className="text-2xl font-bold text-slate-800 mt-8 mb-4">Instant Virtual Numbers for Global SMS OTP Receive</h2>
+        <p className="text-slate-600 leading-relaxed">
+          We provide a wide range of fast and reliable virtual numbers from top-tier locations. Whether you need a US phone number for verification free, a UK mobile number to receive SMS online, or numbers from Canada and Germany, our platform delivers instant SMS reception to help you bypass regional restrictions effortlessly.
+        </p>
+
+        <h2 className="text-2xl font-bold text-slate-800 mt-8 mb-4">Bypass Phone Verification without Registration</h2>
+        <p className="text-slate-600 leading-relaxed">
+          Our service is completely free and requires no registration, no credit card, and no physical SIM card. You can instantly bypass phone verification on any app or website. Just select a burner phone number for verification from our list, use it on your desired platform, and read the incoming OTP code right here on our site.
+        </p>
+      </div>
     </div>
   );
 }
@@ -723,7 +742,7 @@ function Blog() {
             >
               {post.thumbnail && (
                 <div className="w-full h-48 overflow-hidden">
-                  <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                  <img src={post.thumbnail} alt={`Free SMS OTP Virtual Number - ${post.title}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
                 </div>
               )}
               <div className="p-8 flex flex-col flex-grow">
@@ -786,7 +805,7 @@ function Article() {
 
         {post.image && (
           <div className="w-full h-64 sm:h-96 rounded-3xl overflow-hidden shadow-lg">
-            <img src={post.image} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <img src={post.image} alt={`Free SMS OTP Virtual Number - ${post.title}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </div>
         )}
 
@@ -799,9 +818,9 @@ function Article() {
           </p>
           <AdSensePlaceholder label="AdSense In-Article Ad" className="h-48 w-full my-8" />
           <p>
-            By using a virtual number from GlobalSMS Hub, you can protect your identity. Our numbers are sourced from around the globe, providing you with a layer of anonymity that traditional mobile numbers cannot offer.
+            By using a virtual number from Free SMS OTP Receive, you can protect your identity. Our numbers are sourced from around the globe, providing you with a layer of anonymity that traditional mobile numbers cannot offer.
           </p>
-          <h3 className="text-2xl font-black text-slate-900 pt-4">Why choose GlobalSMS Hub?</h3>
+          <h3 className="text-2xl font-black text-slate-900 pt-4">Why choose Free SMS OTP Receive?</h3>
           <p>
             Our platform is designed for speed and reliability. We aggregate numbers from multiple high-quality sources to ensure you always have a working number for your OTP bypass needs. Whether it's for social media, messaging apps, or online marketplaces, we've got you covered.
           </p>
@@ -866,7 +885,7 @@ function Countries({ numbers }: { numbers: NumberData[] }) {
 function Contact() {
   return (
     <div className="max-w-2xl mx-auto space-y-12">
-      <SEOHead title="Contact Us | GlobalSMS Hub Support" description="Get in touch with the GlobalSMS Hub team for support, business inquiries, or to report a broken number." />
+      <SEOHead title="Contact Us | Free SMS OTP Receive Support" description="Get in touch with the Free SMS OTP Receive team for support, business inquiries, or to report a broken number." />
       <div className="text-center space-y-4">
         <h2 className="text-4xl font-black text-slate-900 tracking-tight">Contact <span className="text-indigo-600">Us</span></h2>
         <p className="text-lg text-slate-600">Have questions or need a custom solution? We're here to help.</p>
@@ -877,14 +896,14 @@ function Contact() {
             <div className="bg-indigo-600 p-3 rounded-xl shadow-lg shadow-indigo-100"><Mail className="w-6 h-6 text-white" /></div>
             <div>
               <h4 className="font-bold text-slate-900">Email Support</h4>
-              <p className="text-indigo-600 font-medium">support@globalsms-hub.com</p>
+              <p className="text-indigo-600 font-medium">support@receivesmsquick.com</p>
             </div>
           </div>
           <div className="flex items-center gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100">
             <div className="bg-emerald-600 p-3 rounded-xl shadow-lg shadow-emerald-100"><Shield className="w-6 h-6 text-white" /></div>
             <div>
               <h4 className="font-bold text-slate-900">Business Inquiries</h4>
-              <p className="text-emerald-600 font-medium">biz@globalsms-hub.com</p>
+              <p className="text-emerald-600 font-medium">biz@receivesmsquick.com</p>
             </div>
           </div>
         </div>
@@ -912,7 +931,7 @@ function Contact() {
 function Privacy() {
   return (
     <div className="max-w-3xl mx-auto space-y-12">
-      <SEOHead title="Privacy Policy | GlobalSMS Hub" description="Learn how GlobalSMS Hub protects your privacy. We don't collect personal data, and our service is designed for anonymity." />
+      <SEOHead title="Privacy Policy | Free SMS OTP Receive" description="Learn how Free SMS OTP Receive protects your privacy. We don't collect personal data, and our service is designed for anonymity." />
       <div className="text-center space-y-4">
         <h2 className="text-4xl font-black text-slate-900 tracking-tight">Privacy <span className="text-indigo-600">Policy</span></h2>
         <p className="text-lg text-slate-600">Transparency and anonymity are our core values.</p>
@@ -922,7 +941,7 @@ function Privacy() {
           <h3 className="text-2xl font-black text-slate-900 mb-4 flex items-center gap-2">
             <Shield className="w-6 h-6 text-indigo-600" /> 1. Information We Collect
           </h3>
-          <p>GlobalSMS Hub is a registration-free service. We do not collect, store, or share any personally identifiable information (PII) such as your name, email address, or IP address for the purpose of identifying you. Our goal is to provide a completely anonymous environment for OTP verification.</p>
+          <p>Free SMS OTP Receive is a registration-free service. We do not collect, store, or share any personally identifiable information (PII) such as your name, email address, or IP address for the purpose of identifying you. Our goal is to provide a completely anonymous environment for OTP verification.</p>
           <p>We do not require users to create accounts, providing a layer of protection against data harvesting.</p>
         </section>
 
@@ -954,7 +973,7 @@ function Privacy() {
           <h3 className="text-2xl font-black text-slate-900 mb-4 flex items-center gap-2">
             <Mail className="w-6 h-6 text-indigo-600" /> 5. Contacting Us
           </h3>
-          <p>If there are any questions regarding this privacy policy, you may contact us using the information on our Contact Us page or via email at privacy@globalsms-hub.com.</p>
+          <p>If there are any questions regarding this privacy policy, you may contact us using the information on our Contact Us page or via email at privacy@receivesmsquick.com.</p>
         </section>
       </div>
     </div>

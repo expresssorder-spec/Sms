@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://globalsms-hub.com/</loc>
+    <loc>https://receivesmsquick.com/</loc>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://globalsms-hub.com/countries</loc>
+    <loc>https://receivesmsquick.com/countries</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://globalsms-hub.com/blog</loc>
+    <loc>https://receivesmsquick.com/blog</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://globalsms-hub.com/about</loc>
+    <loc>https://receivesmsquick.com/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://globalsms-hub.com/contact</loc>
+    <loc>https://receivesmsquick.com/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://globalsms-hub.com/privacy</loc>
+    <loc>https://receivesmsquick.com/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
